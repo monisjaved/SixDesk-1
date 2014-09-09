@@ -567,10 +567,11 @@ class SixDeskDB(object):
           dirn.extend([sqlite3.Binary(open(f3).read()),mtime3])
           rows.append(dirn)
           dirn = []
+          count += 1
         if os.path.exists(f10):
           # file_count10 += 1
           mtime10 = os.path.getmtime(f10)
-          if mtime10 > maxtime:
+          if mtime10 > maxtime10:
             FileObj = gzip.open(f10,"r").read().split("\n")[:-1]
             countl = 1
             for lines in FileObj:
@@ -582,7 +583,6 @@ class SixDeskDB(object):
         else:
           print '\nfort.10 not present at \n%s'%(dirName)
         six_id += 1
-        count += 1
         if len(rows) == 6000:
           tab.insertl(rows)
           tab1.insertl(rows10)
