@@ -1,1 +1,2 @@
-(cd test/simple; mktest)
+cd test/simple; 
+./mktest
