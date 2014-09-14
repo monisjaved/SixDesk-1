@@ -602,6 +602,16 @@ class SixDeskDB(object):
            AS SELECT * FROM six_input INNER JOIN six_results
            ON six_input.id==six_results.six_input_id"""
     self.conn.cursor().execute(sql)
+    sql = """create trigger insert_results 
+             INSTEAD OF INSERT ON results
+             BEGIN
+             REPLACE INTO six_input values("""
+    sql = sql + ','.join(["NEW."+i[0] for i in tables.Six_In.fields])
+    sql = sql + """);\n\tREPLACE INTO six_results values("""
+    sql = sql + ','.join(["NEW."+i[0] for i in tables.Six_Res.fields])
+    sql = sql + """);\n\tEND;"""
+    self.conn.cursor().execute(sql)
+
 
   def execute(self,sql):
     cur= self.conn.cursor()
