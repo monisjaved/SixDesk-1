@@ -338,8 +338,11 @@ class SixDeskDB(object):
     env_var = self.env_var
     cols = SQLTable.cols_from_fields(tables.Mad_Run.fields)
     tab = SQLTable(conn,'mad6t_run',cols,tables.Mad_Run.key)
+    maxtime = tab.selectl("max(mad_out_mtime)")[0][0]
     extra_files = []
     a = []
+    count = 0
+    file_count = 0
     workdir = env_var['sixtrack_input']
     a = tab.selectl('distinct run_id')
     if a:
@@ -359,13 +362,17 @@ class SixDeskDB(object):
               compressBuf(os.path.join(dirName, files))
               )
             out_file=os.path.join(dirName,fnroot+'.out.%d'%seed)
+            mad_out_mtime = os.path.getmtime(out_file)
             log_file=os.path.join(dirName,fnroot+'_mad6t_%d.log'%seed)
             lsf_file=os.path.join(dirName,'mad6t_%d.lsf'%seed)
             mad_out = sqlite3.Binary(compressBuf(out_file))
             mad_lsf = sqlite3.Binary(compressBuf(lsf_file))
             mad_log = sqlite3.Binary(compressBuf(log_file))
-            time = os.path.getmtime( log_file)
-            data.append([run_id, seed, mad_in, mad_out, mad_lsf,mad_log,time])
+            time = os.path.getmtime(out_file)
+            if time > maxtime:
+              data.append([run_id, seed, mad_in, mad_out, mad_lsf,mad_log,time])
+              count += 1
+            file_count += 1
           if files.endswith('.mask'):
             path = os.path.join(dirName, files)
             key = path.replace(env_var['scratchdir']+'/','')
@@ -374,6 +381,11 @@ class SixDeskDB(object):
         tab.insertl(data)
     if extra_files:
       self.add_files(extra_files)
+    if file_count > 0:
+      print ' no of mad_in updated/found: %d/%d'%(count,file_count)
+      print ' no of mad_out updated/found: %d/%d'%(count,file_count)
+      print ' no of mad_lsf updated/found: %d/%d'%(count,file_count)
+      print ' no of mad_log updated/found: %d/%d'%(count,file_count)
 
   def st_mad6t_run2(self):
     ''' store fort.3 and tmp files'''
@@ -415,7 +427,7 @@ class SixDeskDB(object):
         mtime = os.path.getmtime(i)
         if f8 in b:
           row.extend([sqlite3.Binary(open(f8, 'r').read())])
-          del b[b.index(f8)]
+          b.remove(f8)
           up_b += 1
         else:
           row.extend([""])
@@ -423,7 +435,7 @@ class SixDeskDB(object):
         f16 = i.replace("fort.2","fort.16")
         if f16 in c:
           row.extend([sqlite3.Binary(open(f16, 'r').read())])
-          del c[c.index(f16)]
+          c.remove(f16)
           up_c += 1
         else:
           row.extend([""])
@@ -441,7 +453,7 @@ class SixDeskDB(object):
         f16 = i.replace('fort.8','fort.16')
         if f16 in c:
           row.extend([sqlite3.Binary(open(f16, 'r').read())])
-          del c[c.index(f16)]
+          c.remove(f16)
           up_c += 1
         else:
           row.extend([""])
@@ -537,7 +549,7 @@ class SixDeskDB(object):
     file_count=0
     file_count10 = 0
     for10 = glob.glob(os.path.join(workdir,'*','*','*','*','*','*','fort.10.gz'))
-    for10 = [i for i in for10 if not '-' in i]
+    for10 = [i for i in for10 if not '-' in i.split('/')[-4]]
     file_count10 = len(for10)
     for dirName in glob.iglob(os.path.join(workdir,'*','*','*','*','*','*')):
       f3=os.path.join(dirName, 'fort.3.gz')
@@ -569,7 +581,7 @@ class SixDeskDB(object):
               countl += 1
             count10 += 1
           if f10 in for10:
-            del for10[for10.index(f10)]
+            for10.remove(f10)
         else:
           print '\nfort.10 not present at \n%s'%(dirName)
         six_id += 1
