@@ -2,7 +2,7 @@ class Env(object):
   fields=[
   ('keyname','str','key'),
   ('value','str','value'),
-  ('mtime','float','last modification time')]
+  ('mtime','timestamp','last modification time')]
   key=['keyname']
 
 class Mad_Run(object):
@@ -13,7 +13,7 @@ class Mad_Run(object):
   ('mad_out','blob','mad_out file'),
   ('mad_lsf','blob','mad_lsf file'),
   ('mad_log','blob','mad_log file'),
-  ('mad_out_mtime','float','last modification time')]
+  ('mad_out_mtime','timestamp','last modification time')]
   key=['run_id','seed']
 
 class Da_Res(object):
@@ -31,7 +31,7 @@ class Mad_Res(object):
   ('fort2','blob','fort2 file'),
   ('fort8','blob','fort8 file'),
   ('fort16','blob','fort16 file'),
-  ('fort_mtime','float','last modification time')]
+  ('fort_mtime','timestamp','last modification time')]
   key=['seed']
 
 class Six_Be(object):
@@ -60,7 +60,7 @@ class Six_Be(object):
   ('qy2', 'float','qy2 value'),
   ('emitn', 'float', 'emitn value'),
   ('gamma', 'float', 'gamma value'),
-  ('mtime', 'float', 'modification time'),]
+  ('mtime', 'timestamp', 'modification time'),]
   key=['seed','tunex','tuney']
 
 class Six_In(object):
@@ -75,7 +75,7 @@ class Six_In(object):
   ('turns', 'string', 'turns value'),
   ('angle', 'float', 'angle value'),
   ('fort3','blob','fort3 file'),
-  ('mtime','float','last modification time')]
+  ('mtime','timestamp','last modification time')]
   key=['seed','simul','tunex','tuney','amp1','amp2','turns','angle']
 
 class Six_Res(object):
@@ -142,7 +142,7 @@ class Six_Res(object):
   ('delta', 'float', 'Dummy7'),
   ('dnms', 'float', 'Internal1'),
   ('trttime', 'float', 'Internal2'),
-  ('mtime','float','last modification time')]
+  ('mtime','timestamp','last modification time')]
   key=['six_input_id','row_num']
 
 
@@ -164,7 +164,7 @@ class Files(object):
   fields=[
   ('path','str','file path'),
   ('content','blob','file content'),
-  ('mtime','float','file modification time')]
+  ('mtime','timestamp','file modification time')]
   key=['path']
 
 class Da_Vst(object):

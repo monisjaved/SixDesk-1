@@ -12,6 +12,7 @@ class SQLTable(object):
       elif ttt == 'str' or ttt == "string": types.append('%s STRING'%i)
       elif ttt == 'int': types.append('%s INTEGER'%i)
       elif ttt == 'blob': types.append('%s BLOB'%i)
+      elif ttt == 'timestamp': types.append('%s TIMESTAMP'%i)
     return types
   @staticmethod
   def dtype_from_fields(fields):
